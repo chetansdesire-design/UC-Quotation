@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Casa | Quotation</title>
+    <style>
+        :root {
+            --primary: #1a252f;
+            --accent: #34495e;
+            --btn-green: #27ae60;
+            --btn-blue: #2980b9;
+            --savings: #27ae60;
+            --danger: #e74c3c;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 10px;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo { height: 50px; width: auto; }
+        
+        .brand-content h1 { margin: 0; font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); }
+        .tagline { margin: 2px 0; font-size: 9px; color: #7f8c8d; font-style: italic; }
+        .address-info { font-size: 10px; margin-top: 5px; color: #444; line-height: 1.4; }
+
+        .quote-header-label {
+            background-color: var(--primary);
+            color: white;
+            padding: 6px 15px;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border-radius: 4px;
+        }
+
+        .client-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .info-group {
+            display: flex;
+            flex-direction: column;
+            border: 1px solid #dcdde1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .info-label {
+            background-color: var(--primary);
+            color: white;
+            padding: 5px 10px;
+            font-weight: bold;
+            font-size: 9px;
+            text-transform: uppercase;
+        }
+
+        .info-group input { border: none; padding: 10px; font-size: 12px; width: 100%; outline: none; background: white; box-sizing: border-box; }
+
+        /* TABLE STYLES */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--primary); color: white; padding: 12px 8px; font-size: 10px; text-transform: uppercase; }
+        td { border: 1px solid #efefef; padding: 10px 5px; text-align: center; }
+
+        .image-box { 
+            width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 4px;
+            margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; background: #fafafa;
+        }
+        .image-box img { width: 100%; height: 100%; object-fit: contain; }
+        .upload-icon { font-size: 18px; color: #7f8c8d; }
+        .upload-text { font-size: 7px; font-weight: bold; color: #999; text-transform: uppercase; }
+        input[type="file"] { display: none; }
+
+        .table-input { width: 95%; border: 1px solid #eee; padding: 8px 5px; text-align: center; font-size: 12px; outline: none; border-radius: 3px; }
+
+        .btn-container { padding: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+        .btn { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 14px 18px; color: white; flex: 1; min-width: 140px; }
+        .btn-add { background: var(--btn-green); }
+        .btn-print { background: var(--btn-blue); }
+
+        .footer-area {
+            margin-top: 25px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .remarks-box textarea { width: 100%; border: 1px solid #dcdde1; border-radius: 4px; padding: 10px; font-size: 11px; resize: none; min-height: 80px; font-family: inherit; box-sizing: border-box; }
+
+        .totals-box { border: 2px solid var(--primary); border-radius: 6px; overflow: hidden; background: white; }
+        .total-line { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .savings-highlight { background-color: #ebfbee; color: var(--savings); font-weight: bold; }
+        .grand-total { background: var(--primary); color: white; font-weight: bold; font-size: 15px; border-bottom: none; }
+
+        .signature-box { border: 1px solid #dcdde1; padding: 15px; text-align: center; border-radius: 6px; background: #fdfdfd; margin-top: 15px; }
+        .sig-line { margin-top: 40px; border-top: 1px solid #333; width: 80%; margin: 0 auto; }
+        .sig-text { margin-top: 5px; font-size: 10px; font-weight: bold; text-transform: uppercase; color: var(--primary); }
+
+        .terms-page-export { margin-top: 40px; border-top: 2px solid var(--primary); padding-top: 20px; }
+
+        .version-stamp { text-align: right; font-size: 9px; color: #bdc3c7; margin-top: 20px; }
+
+        /* MOBILE OPTIMIZATION (SCREEN ONLY) */
+        @media screen and (max-width: 768px) {
+            .client-info { grid-template-columns: 1fr; }
+            
+            /* Turn table into cards */
+            thead { display: none; } /* Hide headers */
+            
+            table, tbody, tr, td { display: block; width: 100%; }
+            
+            tr { 
+                margin-bottom: 15px; 
+                border: 1px solid var(--primary); 
+                border-radius: 8px; 
+                padding: 10px; 
+                box-sizing: border-box;
+                background: #fff;
+            }
+
+            td { 
+                text-align: left; 
+                padding: 8px 0; 
+                border: none; 
+                border-bottom: 1px solid #f0f0f0; 
+                position: relative;
+                padding-left: 40%;
+            }
+
+            td:last-child { border-bottom: none; }
+
+            /* Add labels before data */
+            td::before {
+                content: attr(data-label);
+                position: absolute;
+                left: 10px;
+                width: 35%;
+                font-weight: bold;
+                font-size: 10px;
+                text-transform: uppercase;
+                color: var(--primary);
+            }
+
+            .table-input { text-align: left; width: 100%; }
+            .image-box { margin-left: 0; }
+        }
+
+        /* PRINT SETTINGS */
+        @media print {
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .btn-container, .upload-icon, .upload-text, input[type="file"], textarea::placeholder { display: none !important; }
+            body { padding: 0; background: white; }
+            .container { box-shadow: none; border: none; max-width: 100%; padding: 10px; }
+            
+            /* Ensure table prints as a table, not cards */
+            table { display: table !important; }
+            thead { display: table-header-group !important; }
+            tr { display: table-row !important; border: none !important; }
+            td { display: table-cell !important; border: 1px solid #efefef !important; padding-left: 5px !important; text-align: center !important; }
+            td::before { display: none !important; }
+            
+            .page-break { page-break-before: always; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <img src="https://drive.google.com/thumbnail?id=1fFh9lGXoSzVHqInw5To3aB5lFb3xD_2N&sz=w500" alt="Urban Casa Logo" class="logo">
+            <div class="brand-content">
+                <h1>Urban Casa</h1>
+                <p class="tagline">Timeless furniture for modern living</p>
+                <div class="address-info">Raichandani Mall, Kompally, Hyderabad | +91 888 66 88 990, +91 888 66 88 991</div>
+            </div>
+        </div>
+        <div class="quote-header-label">Quotation</div>
+    </header>
+
+    <div class="client-info">
+        <div class="info-group">
+            <label class="info-label">Customer Name</label>
+            <input type="text" id="custName" placeholder="Full Name" oninput="toTitleCase(this)">
+        </div>
+        <div class="info-group">
+            <label class="info-label">Contact Number</label>
+            <input type="tel" placeholder="+91">
+        </div>
+        <div class="info-group">
+            <label class="info-label">Quotation Date</label>
+            <input type="text" id="dateInput" readonly>
+        </div>
+        <div class="info-group">
+            <label class="info-label">Sales Executive</label>
+            <input type="text" placeholder="Executive Name" oninput="toTitleCase(this)">
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30px;">#</th>
+                <th style="width: 80px;">Reference</th>
+                <th style="width: 120px;">Barcode</th>
+                <th>Item Description</th>
+                <th style="width: 50px;">Qty</th>
+                <th>MRP (Unit)</th>
+                <th>Offer Price</th>
+                <th>Amount</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr class="item-row">
+                <td data-label="Item #">1</td>
+                <td data-label="Reference">
+                    <label class="image-box">
+                        <span class="upload-icon">📤</span>
+                        <span class="upload-text">Upload</span>
+                        <input type="file" accept="image/*" onchange="previewImg(this)">
+                    </label>
+                </td>
+                <td data-label="Barcode"><input type="text" class="table-input" placeholder="Manual Code"></td>
+                <td data-label="Description"><input type="text" class="table-input" placeholder="Product details..." oninput="toTitleCase(this)"></td>
+                <td data-label="Qty"><input type="number" class="table-input qty" value="1" min="1" oninput="runCalc(this)"></td>
+                <td data-label="MRP"><input type="number" class="table-input mrp" value="0" oninput="runCalc(this)"></td>
+                <td data-label="Offer Price"><input type="number" class="table-input price" value="0" oninput="runCalc(this)"></td>
+                <td data-label="Total" class="row-total" style="font-weight: bold;">0.00</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="btn-container">
+        <button class="btn btn-add" onclick="addNewRow()">+ Add Item</button>
+        <button class="btn btn-print" onclick="exportWithFileName()">Export Quotation (PDF)</button>
+    </div>
+
+    <div class="footer-area">
+        <div class="remarks-section">
+            <h4 style="font-size: 12px; margin-bottom: 5px; text-transform: uppercase; border-bottom: 1px solid #eee;">Remarks</h4>
+            <div class="remarks-box">
+                <textarea rows="5" placeholder="Add specific remarks, fabric codes, or polish finish here..." oninput="toTitleCase(this)"></textarea>
+            </div>
+        </div>
+
+        <div class="right-column">
+            <div class="totals-box">
+                <div class="total-line"><span>Total Units:</span><span id="finalQty">1</span></div>
+                <div class="total-line"><span>Total MRP (Incl. GST):</span><span id="finalMRP">0.00</span></div>
+                <div class="total-line savings-highlight"><span>Total Savings:</span><span id="finalSavings">0.00</span></div>
+                <div class="total-line grand-total"><span>Grand Total (Incl. GST):</span><span id="finalAmt">0.00</span></div>
+            </div>
+            <div class="signature-box">
+                <div class="sig-line"></div>
+                <div class="sig-text">Authorized Store Manager</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="terms-page-export page-break">
+        <h2 style="color: var(--primary); text-transform: uppercase; font-size: 18px;">Terms and Conditions</h2>
+        <div style="font-size: 12px; line-height: 1.8; color: #333; margin-top: 15px;">
+            <p><b>1. Payment:</b> **20% advance to be paid to proceed with this quotation.** Balance 80% payment is required prior to dispatch for all items.</p>
+            <p><b>2. Validity:</b> This quotation is valid for 7 business days from the date of issue.</p>
+            <p><b>3. Pricing:</b> All prices mentioned above are **inclusive of GST**.</p>
+            <p><b>4. Delivery:</b> **Delivery within city limits is included** in the above pricing. For locations outside city limits, extra charges will apply at actuals. Ground floor delivery is included; upper floors incur extra charges at actuals.</p>
+            <p><b>5. Inspection:</b> Please inspect items upon delivery. Urban Casa is not liable for damages reported after our delivery team leaves the premises.</p>
+            <p><b>6. Custom Orders:</b> Orders with specific fabric or polish codes cannot be returned or refunded once production has commenced.</p>
+        </div>
+    </div>
+
+    <div class="version-stamp">v1.7</div>
+</div>
+
+<script>
+    function toTitleCase(input) {
+        let words = input.value.split(' ');
+        for (let i = 0; i < words.length; i++) {
+            if (words[i].length > 0) {
+                words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
+            }
+        }
+        input.value = words.join(' ');
+    }
+
+    window.onload = function() {
+        const now = new Date();
+        const dd = String(now.getDate()).padStart(2, '0');
+        const mm = String(now.getMonth() + 1).padStart(2, '0');
+        document.getElementById('dateInput').value = `${dd}-${mm}-${now.getFullYear()}`;
+    }
+
+    function exportWithFileName() {
+        const customerName = document.getElementById('custName').value.trim();
+        const date = document.getElementById('dateInput').value;
+        const originalTitle = document.title;
+        document.title = customerName ? `Quotation - ${customerName} - ${date}` : `Quotation - Urban Casa - ${date}`;
+        window.print();
+        setTimeout(() => { document.title = originalTitle; }, 100);
+    }
+
+    function previewImg(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                input.parentElement.innerHTML = `<img src="${e.target.result}"><input type="file" accept="image/*" onchange="previewImg(this)">`;
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function runCalc(el) {
+        const row = el.closest('tr');
+        const q = parseFloat(row.querySelector('.qty').value) || 0;
+        const p = parseFloat(row.querySelector('.price').value) || 0;
+        row.querySelector('.row-total').innerText = (q * p).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        updateGrandTotals();
+    }
+
+    function updateGrandTotals() {
+        let tQ = 0, tA = 0, tMRP = 0;
+        document.querySelectorAll('.item-row').forEach(row => {
+            const q = parseFloat(row.querySelector('.qty').value) || 0;
+            const m = parseFloat(row.querySelector('.mrp').value) || 0;
+            const p = parseFloat(row.querySelector('.price').value) || 0;
+            tQ += q; tMRP += (q * m); tA += (q * p);
+        });
+        document.getElementById('finalQty').innerText = tQ;
+        document.getElementById('finalMRP').innerText = tMRP.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('finalSavings').innerText = (tMRP - tA).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('finalAmt').innerText = tA.toLocaleString('en-IN', {minimumFractionDigits: 2});
+    }
+
+    function addNewRow() {
+        const tbody = document.getElementById('tableBody');
+        const rowCount = document.querySelectorAll('.item-row').length + 1;
+        const tr = document.createElement('tr');
+        tr.className = 'item-row';
+        tr.innerHTML = `
+            <td data-label="Item #">${rowCount}</td>
+            <td data-label="Reference">
+                <label class="image-box">
+                    <span class="upload-icon">📤</span>
+                    <span class="upload-text">Upload</span>
+                    <input type="file" accept="image/*" onchange="previewImg(this)">
+                </label>
+            </td>
+            <td data-label="Barcode"><input type="text" class="table-input" placeholder="Manual Code"></td>
+            <td data-label="Description"><input type="text" class="table-input" placeholder="Product details..." oninput="toTitleCase(this)"></td>
+            <td data-label="Qty"><input type="number" class="table-input qty" value="1" min="1" oninput="runCalc(this)"></td>
+            <td data-label="MRP"><input type="number" class="table-input mrp" value="0" oninput="runCalc(this)"></td>
+            <td data-label="Offer Price"><input type="number" class="table-input price" value="0" oninput="runCalc(this)"></td>
+            <td data-label="Total" class="row-total" style="font-weight: bold;">0.00</td>`;
+        tbody.appendChild(tr);
+        updateGrandTotals();
+    }
+</script>
+</body>
+</html>
