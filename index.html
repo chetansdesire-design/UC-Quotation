@@ -23,6 +23,9 @@
             padding: 10px;
             background-color: #f0f2f5;
             color: #333;
+            /* Force colors in print */
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
         }
 
         .container {
@@ -55,7 +58,7 @@
 
         .quote-header-label {
             background-color: var(--primary);
-            color: white;
+            color: white !important;
             padding: 6px 15px;
             font-size: 12px;
             font-weight: bold;
@@ -81,7 +84,7 @@
 
         .info-label {
             background-color: var(--primary);
-            color: white;
+            color: white !important;
             padding: 5px 10px;
             font-weight: bold;
             font-size: 9px;
@@ -91,7 +94,7 @@
         .info-group input { border: none; padding: 10px; font-size: 12px; width: 100%; outline: none; background: white; box-sizing: border-box; }
 
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-        th { background: var(--primary); color: white; padding: 12px 8px; font-size: 10px; text-transform: uppercase; }
+        th { background: var(--primary) !important; color: white !important; padding: 12px 8px; font-size: 10px; text-transform: uppercase; }
         td { border: 1px solid #efefef; padding: 10px 5px; text-align: center; font-size: 12px; }
 
         .image-box { 
@@ -137,8 +140,8 @@
 
         .totals-box { border: 2px solid var(--primary); border-radius: 6px; overflow: hidden; background: white; }
         .total-line { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
-        .savings-highlight { background-color: #ebfbee; color: var(--savings); font-weight: bold; }
-        .grand-total { background: var(--primary); color: white; font-size: 15px; border-bottom: none; font-weight: bold; }
+        .savings-highlight { background-color: #ebfbee !important; color: var(--savings) !important; font-weight: bold; }
+        .grand-total { background: var(--primary) !important; color: white !important; font-size: 15px; border-bottom: none; font-weight: bold; }
 
         .terms-section { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
 
@@ -187,7 +190,12 @@
 
         @media print {
             .btn-container, .btn-del, .upload-icon, .upload-text, input[type="file"], #modalOverlay, #searchModal { display: none !important; }
-            body { padding: 0; background: white; }
+            body { 
+                padding: 0; 
+                background: white;
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important;
+            }
             .container { box-shadow: none; border: none; max-width: 100%; padding: 10px; }
             table { display: table !important; }
             thead { display: table-header-group !important; }
@@ -195,6 +203,15 @@
             td { display: table-cell !important; border: 1px solid #efefef !important; padding-left: 5px !important; text-align: center !important; }
             td::before { display: none !important; }
             .signature-container { margin-top: 80px; }
+            /* Ensure colors and backgrounds print */
+            .quote-header-label, .info-label, th, .grand-total {
+                background-color: #1a252f !important;
+                color: white !important;
+            }
+            .savings-highlight {
+                background-color: #ebfbee !important;
+                color: #27ae60 !important;
+            }
         }
     </style>
 </head>
@@ -397,7 +414,6 @@
         }
     }
 
-    // UPDATED: Function now returns a promise so export can wait for it
     async function saveToFirebase() {
         const items = [];
         const rows = document.querySelectorAll('.item-row');
@@ -433,17 +449,12 @@
                 body: JSON.stringify(data),
                 headers: { 'Content-Type': 'application/json' }
             });
-            if(response.ok) {
-                console.log("Auto-save complete.");
-                return true;
-            }
+            return response.ok;
         } catch (e) {
-            alert("Error saving to database.");
             return false;
         }
     }
 
-    // NEW: Function to automate Save then Export
     async function autoSaveAndExport() {
         const saveSuccess = await saveToFirebase();
         if (saveSuccess) {
