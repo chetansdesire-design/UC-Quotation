@@ -10,6 +10,8 @@
             --accent: #34495e;
             --btn-green: #27ae60;
             --btn-blue: #2980b9;
+            --btn-orange: #f39c12;
+            --btn-purple: #8e44ad;
             --savings: #27ae60;
             --danger: #e74c3c;
             --bg-light: #f8f9fa;
@@ -88,33 +90,47 @@
 
         .info-group input { border: none; padding: 10px; font-size: 12px; width: 100%; outline: none; background: white; box-sizing: border-box; }
 
-        /* TABLE STYLES */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; }
         th { background: var(--primary); color: white; padding: 12px 8px; font-size: 10px; text-transform: uppercase; }
-        td { border: 1px solid #efefef; padding: 10px 5px; text-align: center; }
+        td { border: 1px solid #efefef; padding: 10px 5px; text-align: center; font-size: 12px; }
 
         .image-box { 
             width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 4px;
             margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            cursor: pointer; background: #fafafa;
+            cursor: pointer; background: #fafafa; position: relative; overflow: hidden;
         }
-        .image-box img { width: 100%; height: 100%; object-fit: contain; }
-        .upload-icon { font-size: 18px; color: #7f8c8d; }
-        .upload-text { font-size: 7px; font-weight: bold; color: #999; text-transform: uppercase; }
+        .image-box img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
+        .upload-icon { font-size: 18px; color: #7f8c8d; z-index: 1; }
+        .upload-text { font-size: 7px; font-weight: bold; color: #999; text-transform: uppercase; z-index: 1; }
         input[type="file"] { display: none; }
 
-        .table-input { width: 95%; border: 1px solid #eee; padding: 8px 5px; text-align: center; font-size: 12px; outline: none; border-radius: 3px; }
+        .table-input { width: 95%; border: 1px solid #eee; padding: 8px 5px; text-align: center; font-size: 12px; outline: none; border-radius: 3px; font-family: inherit; }
 
         .btn-container { padding: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; }
-        .btn { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 14px 18px; color: white; flex: 1; min-width: 140px; }
+        .btn { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 14px 18px; color: white; flex: 1; min-width: 140px; transition: opacity 0.2s; }
+        .btn:hover { opacity: 0.9; }
         .btn-add { background: var(--btn-green); }
         .btn-print { background: var(--btn-blue); }
+        .btn-save { background: var(--btn-orange); }
+        .btn-search { background: var(--btn-purple); }
+        
+        .btn-del { 
+            background: none; 
+            border: none; 
+            cursor: pointer; 
+            color: #95a5a6; 
+            font-size: 18px; 
+            padding: 5px;
+            transition: color 0.2s;
+        }
+        .btn-del:hover { color: var(--danger); }
 
         .footer-area {
             margin-top: 25px;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
+            margin-bottom: 30px;
         }
 
         .remarks-box textarea { width: 100%; border: 1px solid #dcdde1; border-radius: 4px; padding: 10px; font-size: 11px; resize: none; min-height: 80px; font-family: inherit; box-sizing: border-box; }
@@ -122,76 +138,63 @@
         .totals-box { border: 2px solid var(--primary); border-radius: 6px; overflow: hidden; background: white; }
         .total-line { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
         .savings-highlight { background-color: #ebfbee; color: var(--savings); font-weight: bold; }
-        .grand-total { background: var(--primary); color: white; font-weight: bold; font-size: 15px; border-bottom: none; }
+        .grand-total { background: var(--primary); color: white; font-size: 15px; border-bottom: none; font-weight: bold; }
 
-        .signature-box { border: 1px solid #dcdde1; padding: 15px; text-align: center; border-radius: 6px; background: #fdfdfd; margin-top: 15px; }
-        .sig-line { margin-top: 40px; border-top: 1px solid #333; width: 80%; margin: 0 auto; }
-        .sig-text { margin-top: 5px; font-size: 10px; font-weight: bold; text-transform: uppercase; color: var(--primary); }
+        .terms-section { margin-top: 20px; border-top: 1px solid #eee; padding-top: 15px; }
 
-        .terms-page-export { margin-top: 40px; border-top: 2px solid var(--primary); padding-top: 20px; }
+        .signature-container {
+            margin-top: 50px;
+            display: flex;
+            justify-content: flex-end;
+            padding-right: 50px;
+        }
+        .signature-box { text-align: center; width: 250px; }
+        .sig-line { border-top: 1px solid #333; width: 100%; margin-bottom: 8px; }
+        .sig-text { font-size: 11px; font-weight: bold; text-transform: uppercase; color: var(--primary); }
 
-        .version-stamp { text-align: right; font-size: 9px; color: #bdc3c7; margin-top: 20px; }
+        #searchModal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1001;
+            width: 350px;
+        }
+        #modalOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 1000;
+        }
+        .modal-select { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; }
 
-        /* MOBILE OPTIMIZATION (SCREEN ONLY) */
         @media screen and (max-width: 768px) {
             .client-info { grid-template-columns: 1fr; }
-            
-            /* Turn table into cards */
-            thead { display: none; } /* Hide headers */
-            
+            thead { display: none; }
             table, tbody, tr, td { display: block; width: 100%; }
-            
-            tr { 
-                margin-bottom: 15px; 
-                border: 1px solid var(--primary); 
-                border-radius: 8px; 
-                padding: 10px; 
-                box-sizing: border-box;
-                background: #fff;
-            }
-
-            td { 
-                text-align: left; 
-                padding: 8px 0; 
-                border: none; 
-                border-bottom: 1px solid #f0f0f0; 
-                position: relative;
-                padding-left: 40%;
-            }
-
-            td:last-child { border-bottom: none; }
-
-            /* Add labels before data */
-            td::before {
-                content: attr(data-label);
-                position: absolute;
-                left: 10px;
-                width: 35%;
-                font-weight: bold;
-                font-size: 10px;
-                text-transform: uppercase;
-                color: var(--primary);
-            }
-
+            tr { margin-bottom: 15px; border: 1px solid var(--primary); border-radius: 8px; padding: 10px; box-sizing: border-box; background: #fff; }
+            td { text-align: left; padding: 8px 0; border: none; border-bottom: 1px solid #f0f0f0; position: relative; padding-left: 40%; }
+            td::before { content: attr(data-label); position: absolute; left: 10px; width: 35%; font-weight: bold; font-size: 10px; text-transform: uppercase; color: var(--primary); }
             .table-input { text-align: left; width: 100%; }
-            .image-box { margin-left: 0; }
+            .signature-container { justify-content: center; padding-right: 0; }
         }
 
-        /* PRINT SETTINGS */
         @media print {
-            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-            .btn-container, .upload-icon, .upload-text, input[type="file"], textarea::placeholder { display: none !important; }
+            .btn-container, .btn-del, .upload-icon, .upload-text, input[type="file"], #modalOverlay, #searchModal { display: none !important; }
             body { padding: 0; background: white; }
             .container { box-shadow: none; border: none; max-width: 100%; padding: 10px; }
-            
-            /* Ensure table prints as a table, not cards */
             table { display: table !important; }
             thead { display: table-header-group !important; }
             tr { display: table-row !important; border: none !important; }
             td { display: table-cell !important; border: 1px solid #efefef !important; padding-left: 5px !important; text-align: center !important; }
             td::before { display: none !important; }
-            
-            .page-break { page-break-before: always; }
+            .signature-container { margin-top: 80px; }
         }
     </style>
 </head>
@@ -204,7 +207,7 @@
             <div class="brand-content">
                 <h1>Urban Casa</h1>
                 <p class="tagline">Timeless furniture for modern living</p>
-                <div class="address-info">Raichandani Mall, Kompally, Hyderabad | +91 888 66 88 990, +91 888 66 88 991</div>
+                <div class="address-info">Raichandani Mall, Kompally, Hyderabad | +91 888 66 88 990</div>
             </div>
         </div>
         <div class="quote-header-label">Quotation</div>
@@ -217,7 +220,7 @@
         </div>
         <div class="info-group">
             <label class="info-label">Contact Number</label>
-            <input type="tel" placeholder="+91">
+            <input type="tel" id="custPhone" placeholder="+91">
         </div>
         <div class="info-group">
             <label class="info-label">Quotation Date</label>
@@ -225,7 +228,7 @@
         </div>
         <div class="info-group">
             <label class="info-label">Sales Executive</label>
-            <input type="text" placeholder="Executive Name" oninput="toTitleCase(this)">
+            <input type="text" id="salesExec" placeholder="Executive Name" oninput="toTitleCase(this)">
         </div>
     </div>
 
@@ -234,12 +237,13 @@
             <tr>
                 <th style="width: 30px;">#</th>
                 <th style="width: 80px;">Reference</th>
-                <th style="width: 120px;">Barcode</th>
+                <th style="width: 100px;">Barcode</th>
                 <th>Item Description</th>
                 <th style="width: 50px;">Qty</th>
                 <th>MRP (Unit)</th>
                 <th>Offer Price</th>
                 <th>Amount</th>
+                <th style="width: 40px;" class="no-print"></th>
             </tr>
         </thead>
         <tbody id="tableBody">
@@ -252,26 +256,29 @@
                         <input type="file" accept="image/*" onchange="previewImg(this)">
                     </label>
                 </td>
-                <td data-label="Barcode"><input type="text" class="table-input" placeholder="Manual Code"></td>
-                <td data-label="Description"><input type="text" class="table-input" placeholder="Product details..." oninput="toTitleCase(this)"></td>
+                <td data-label="Barcode"><input type="text" class="table-input barcode" placeholder="Code"></td>
+                <td data-label="Description"><input type="text" class="table-input desc" placeholder="Details..." oninput="toTitleCase(this)"></td>
                 <td data-label="Qty"><input type="number" class="table-input qty" value="1" min="1" oninput="runCalc(this)"></td>
                 <td data-label="MRP"><input type="number" class="table-input mrp" value="0" oninput="runCalc(this)"></td>
                 <td data-label="Offer Price"><input type="number" class="table-input price" value="0" oninput="runCalc(this)"></td>
-                <td data-label="Total" class="row-total" style="font-weight: bold;">0.00</td>
+                <td data-label="Total" class="row-total">0.00</td>
+                <td class="no-print"><button class="btn-del" onclick="deleteRow(this)">🗑️</button></td>
             </tr>
         </tbody>
     </table>
 
     <div class="btn-container">
         <button class="btn btn-add" onclick="addNewRow()">+ Add Item</button>
-        <button class="btn btn-print" onclick="exportWithFileName()">Export Quotation (PDF)</button>
+        <button class="btn btn-save" onclick="saveToFirebase()">💾 Save Quote</button>
+        <button class="btn btn-search" onclick="searchQuote()">🔍 Search Quote</button>
+        <button class="btn btn-print" onclick="autoSaveAndExport()">🖨️ Export PDF</button>
     </div>
 
     <div class="footer-area">
         <div class="remarks-section">
-            <h4 style="font-size: 12px; margin-bottom: 5px; text-transform: uppercase; border-bottom: 1px solid #eee;">Remarks</h4>
+            <h4 style="font-size: 12px; margin-bottom: 5px; text-transform: uppercase;">Remarks</h4>
             <div class="remarks-box">
-                <textarea rows="5" placeholder="Add specific remarks, fabric codes, or polish finish here..." oninput="toTitleCase(this)"></textarea>
+                <textarea id="remarks" rows="5" placeholder="Add specific remarks..." oninput="toTitleCase(this)"></textarea>
             </div>
         </div>
 
@@ -282,60 +289,61 @@
                 <div class="total-line savings-highlight"><span>Total Savings:</span><span id="finalSavings">0.00</span></div>
                 <div class="total-line grand-total"><span>Grand Total (Incl. GST):</span><span id="finalAmt">0.00</span></div>
             </div>
-            <div class="signature-box">
-                <div class="sig-line"></div>
-                <div class="sig-text">Authorized Store Manager</div>
-            </div>
         </div>
     </div>
 
-    <div class="terms-page-export page-break">
-        <h2 style="color: var(--primary); text-transform: uppercase; font-size: 18px;">Terms and Conditions</h2>
-        <div style="font-size: 12px; line-height: 1.8; color: #333; margin-top: 15px;">
-            <p><b>1. Payment:</b> **20% advance to be paid to proceed with this quotation.** Balance 80% payment is required prior to dispatch for all items.</p>
-            <p><b>2. Validity:</b> This quotation is valid for 7 business days from the date of issue.</p>
-            <p><b>3. Pricing:</b> All prices mentioned above are **inclusive of GST**.</p>
-            <p><b>4. Delivery:</b> **Delivery within city limits is included** in the above pricing. For locations outside city limits, extra charges will apply at actuals. Ground floor delivery is included; upper floors incur extra charges at actuals.</p>
-            <p><b>5. Inspection:</b> Please inspect items upon delivery. Urban Casa is not liable for damages reported after our delivery team leaves the premises.</p>
-            <p><b>6. Custom Orders:</b> Orders with specific fabric or polish codes cannot be returned or refunded once production has commenced.</p>
+    <div class="terms-section">
+        <h2 style="color: var(--primary); text-transform: uppercase; font-size: 16px;">Terms and Conditions</h2>
+        <div style="font-size: 11px; line-height: 1.6; color: #333; margin-top: 10px;">
+            <p>1. **20% advance** to be paid to proceed. Balance 80% prior to dispatch.</p>
+            <p>2. Quotation valid for **7 business days**.</p>
+            <p>3. Prices are **inclusive of GST**.</p>
+            <p>4. Delivery included within city limits (Ground floor).</p>
         </div>
     </div>
 
-    <div class="version-stamp">v1.7</div>
+    <div class="signature-container">
+        <div class="signature-box">
+            <div class="sig-line"></div>
+            <div class="sig-text">Authorized Store Manager</div>
+        </div>
+    </div>
+</div>
+
+<div id="modalOverlay" onclick="closeModal()"></div>
+<div id="searchModal">
+    <h4 style="margin:0 0 10px 0; color: var(--primary);">Multiple Quotes Found</h4>
+    <p style="font-size: 11px; color: #666;">Select the record you want to load:</p>
+    <select id="recordDropdown" class="modal-select"></select>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn btn-save" style="flex: 2;" onclick="confirmSelection()">Load Record</button>
+        <button class="btn btn-del" style="flex: 1; border-radius: 4px; height: auto; width: auto; background:#95a5a6; color:white;" onclick="closeModal()">Cancel</button>
+    </div>
 </div>
 
 <script>
+    const FIREBASE_URL = "https://furniture-quotation-default-rtdb.firebaseio.com/quotations.json";
+    let searchResults = {}; 
+
     function toTitleCase(input) {
-        let words = input.value.split(' ');
-        for (let i = 0; i < words.length; i++) {
-            if (words[i].length > 0) {
-                words[i] = words[i].charAt(0).toUpperCase() + words[i].slice(1).toLowerCase();
-            }
-        }
-        input.value = words.join(' ');
+        input.value = input.value.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
     }
 
     window.onload = function() {
         const now = new Date();
-        const dd = String(now.getDate()).padStart(2, '0');
-        const mm = String(now.getMonth() + 1).padStart(2, '0');
-        document.getElementById('dateInput').value = `${dd}-${mm}-${now.getFullYear()}`;
-    }
-
-    function exportWithFileName() {
-        const customerName = document.getElementById('custName').value.trim();
-        const date = document.getElementById('dateInput').value;
-        const originalTitle = document.title;
-        document.title = customerName ? `Quotation - ${customerName} - ${date}` : `Quotation - Urban Casa - ${date}`;
-        window.print();
-        setTimeout(() => { document.title = originalTitle; }, 100);
+        document.getElementById('dateInput').value = `${String(now.getDate()).padStart(2, '0')}-${String(now.getMonth() + 1).padStart(2, '0')}-${now.getFullYear()}`;
     }
 
     function previewImg(input) {
         if (input.files && input.files[0]) {
             const reader = new FileReader();
+            const container = input.parentElement;
             reader.onload = e => {
-                input.parentElement.innerHTML = `<img src="${e.target.result}"><input type="file" accept="image/*" onchange="previewImg(this)">`;
+                container.querySelectorAll('.upload-icon, .upload-text, img').forEach(el => el.remove());
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                img.className = 'preview-image';
+                container.prepend(img);
             };
             reader.readAsDataURL(input.files[0]);
         }
@@ -370,21 +378,172 @@
         tr.className = 'item-row';
         tr.innerHTML = `
             <td data-label="Item #">${rowCount}</td>
-            <td data-label="Reference">
-                <label class="image-box">
-                    <span class="upload-icon">📤</span>
-                    <span class="upload-text">Upload</span>
-                    <input type="file" accept="image/*" onchange="previewImg(this)">
-                </label>
-            </td>
-            <td data-label="Barcode"><input type="text" class="table-input" placeholder="Manual Code"></td>
-            <td data-label="Description"><input type="text" class="table-input" placeholder="Product details..." oninput="toTitleCase(this)"></td>
+            <td data-label="Reference"><label class="image-box"><span class="upload-icon">📤</span><span class="upload-text">Upload</span><input type="file" accept="image/*" onchange="previewImg(this)"></label></td>
+            <td data-label="Barcode"><input type="text" class="table-input barcode" placeholder="Code"></td>
+            <td data-label="Description"><input type="text" class="table-input desc" placeholder="Details..." oninput="toTitleCase(this)"></td>
             <td data-label="Qty"><input type="number" class="table-input qty" value="1" min="1" oninput="runCalc(this)"></td>
             <td data-label="MRP"><input type="number" class="table-input mrp" value="0" oninput="runCalc(this)"></td>
             <td data-label="Offer Price"><input type="number" class="table-input price" value="0" oninput="runCalc(this)"></td>
-            <td data-label="Total" class="row-total" style="font-weight: bold;">0.00</td>`;
+            <td data-label="Total" class="row-total">0.00</td>
+            <td class="no-print"><button class="btn-del" onclick="deleteRow(this)">🗑️</button></td>`;
         tbody.appendChild(tr);
-        updateGrandTotals();
+        return tr;
+    }
+
+    function deleteRow(btn) {
+        if(document.querySelectorAll('.item-row').length > 1) {
+            btn.closest('tr').remove();
+            updateGrandTotals();
+        }
+    }
+
+    // UPDATED: Function now returns a promise so export can wait for it
+    async function saveToFirebase() {
+        const items = [];
+        const rows = document.querySelectorAll('.item-row');
+        
+        for (const row of rows) {
+            let imgData = null;
+            const img = row.querySelector('.preview-image');
+            if (img) imgData = img.src;
+
+            items.push({
+                barcode: row.querySelector('.barcode').value,
+                desc: row.querySelector('.desc').value,
+                qty: row.querySelector('.qty').value,
+                mrp: row.querySelector('.mrp').value,
+                price: row.querySelector('.price').value,
+                image: imgData 
+            });
+        }
+
+        const data = {
+            customer: document.getElementById('custName').value,
+            phone: document.getElementById('custPhone').value,
+            date: document.getElementById('dateInput').value,
+            salesExec: document.getElementById('salesExec').value,
+            total: document.getElementById('finalAmt').innerText,
+            remarks: document.getElementById('remarks').value,
+            items: items
+        };
+
+        try {
+            const response = await fetch(FIREBASE_URL, {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            });
+            if(response.ok) {
+                console.log("Auto-save complete.");
+                return true;
+            }
+        } catch (e) {
+            alert("Error saving to database.");
+            return false;
+        }
+    }
+
+    // NEW: Function to automate Save then Export
+    async function autoSaveAndExport() {
+        const saveSuccess = await saveToFirebase();
+        if (saveSuccess) {
+            exportWithFileName();
+        } else {
+            const proceed = confirm("Database save failed. Do you want to export anyway?");
+            if (proceed) exportWithFileName();
+        }
+    }
+
+    async function searchQuote() {
+        const query = prompt("Enter Customer Name or Phone Number:").toLowerCase().trim();
+        if (!query) return;
+
+        try {
+            const response = await fetch(FIREBASE_URL);
+            const data = await response.json();
+            if (!data) { alert("No data in database."); return; }
+
+            const matches = Object.keys(data).filter(key => {
+                const entry = data[key];
+                const nameMatch = entry.customer && entry.customer.toLowerCase().includes(query);
+                const phoneMatch = entry.phone && entry.phone.toString() === query;
+                return nameMatch || phoneMatch;
+            });
+
+            if (matches.length === 0) {
+                alert("No records found.");
+            } else if (matches.length === 1) {
+                loadRecordIntoForm(data[matches[0]]);
+            } else {
+                searchResults = data; 
+                const dropdown = document.getElementById('recordDropdown');
+                dropdown.innerHTML = "";
+                matches.forEach(key => {
+                    const rec = data[key];
+                    const opt = document.createElement('option');
+                    opt.value = key;
+                    opt.textContent = `${rec.date} | ${rec.customer} | ₹${rec.total}`;
+                    dropdown.appendChild(opt);
+                });
+                document.getElementById('modalOverlay').style.display = 'block';
+                document.getElementById('searchModal').style.display = 'block';
+            }
+        } catch (e) {
+            alert("Connection error.");
+        }
+    }
+
+    function confirmSelection() {
+        const selectedKey = document.getElementById('recordDropdown').value;
+        loadRecordIntoForm(searchResults[selectedKey]);
+        closeModal();
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').style.display = 'none';
+        document.getElementById('searchModal').style.display = 'none';
+    }
+
+    function loadRecordIntoForm(record) {
+        document.getElementById('custName').value = record.customer || "";
+        document.getElementById('custPhone').value = record.phone || "";
+        document.getElementById('dateInput').value = record.date || "";
+        document.getElementById('salesExec').value = record.salesExec || "";
+        document.getElementById('remarks').value = record.remarks || "";
+
+        const tbody = document.getElementById('tableBody');
+        tbody.innerHTML = ""; 
+        
+        if (record.items && record.items.length > 0) {
+            record.items.forEach(item => {
+                const tr = addNewRow();
+                tr.querySelector('.barcode').value = item.barcode || "";
+                tr.querySelector('.desc').value = item.desc || "";
+                tr.querySelector('.qty').value = item.qty || 1;
+                tr.querySelector('.mrp').value = item.mrp || 0;
+                tr.querySelector('.price').value = item.price || 0;
+                
+                if (item.image) {
+                    const imgBox = tr.querySelector('.image-box');
+                    imgBox.querySelectorAll('.upload-icon, .upload-text').forEach(el => el.remove());
+                    const img = document.createElement('img');
+                    img.src = item.image;
+                    img.className = 'preview-image';
+                    imgBox.prepend(img);
+                }
+                
+                runCalc(tr.querySelector('.qty'));
+            });
+        }
+    }
+
+    function exportWithFileName() {
+        const customerName = document.getElementById('custName').value.trim();
+        const date = document.getElementById('dateInput').value;
+        const originalTitle = document.title;
+        document.title = customerName ? `Quotation - ${customerName} - ${date}` : `Quotation - Urban Casa - ${date}`;
+        window.print();
+        setTimeout(() => { document.title = originalTitle; }, 100);
     }
 </script>
 </body>
