@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urban Casa | Quotation System</title>
+    <style>
+        :root {
+            --primary: #1a252f;
+            --accent: #34495e;
+            --btn-green: #27ae60;
+            --btn-blue: #2980b9;
+            --btn-orange: #f39c12;
+            --btn-purple: #8e44ad;
+            --savings: #27ae60;
+            --danger: #e74c3c;
+            --bg-light: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0; padding: 10px; background-color: #f0f2f5; color: #333;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+
+        /* Status Toast Notification */
+        #statusToast {
+            position: fixed; top: 20px; right: 20px; padding: 12px 25px;
+            border-radius: 5px; color: white; font-weight: bold; display: none;
+            z-index: 2000; box-shadow: 0 4px 12px rgba(0,0,0,0.2); font-size: 14px;
+        }
+        .status-loading { background: var(--btn-blue); }
+        .status-success { background: var(--btn-green); }
+        .status-error { background: var(--danger); }
+
+        .container {
+            max-width: 1100px; margin: auto; background: #fff; padding: 20px;
+            border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: relative;
+        }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 2px solid var(--primary);
+            padding-bottom: 10px; flex-wrap: wrap; gap: 15px;
+        }
+
+        .header-left { display: flex; align-items: center; gap: 15px; }
+        .logo { height: 50px; width: auto; }
+        .brand-content h1 { margin: 0; font-size: 20px; letter-spacing: 2px; text-transform: uppercase; color: var(--primary); }
+        .tagline { margin: 2px 0; font-size: 9px; color: #7f8c8d; font-style: italic; }
+        .address-info { font-size: 10px; margin-top: 5px; color: #444; line-height: 1.4; }
+
+        .quote-header-label {
+            background-color: var(--primary); color: white !important;
+            padding: 6px 15px; font-size: 12px; font-weight: bold;
+            text-transform: uppercase; letter-spacing: 2px; border-radius: 4px;
+        }
+
+        .client-info { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 25px; }
+        .info-group { display: flex; flex-direction: column; border: 1px solid #dcdde1; border-radius: 4px; overflow: hidden; }
+        .info-label { background-color: var(--primary); color: white !important; padding: 5px 10px; font-weight: bold; font-size: 9px; text-transform: uppercase; }
+        .info-group input { border: none; padding: 10px; font-size: 12px; width: 100%; outline: none; background: white; box-sizing: border-box; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { background: var(--primary) !important; color: white !important; padding: 12px 8px; font-size: 10px; text-transform: uppercase; }
+        td { border: 1px solid #efefef; padding: 10px 5px; text-align: center; font-size: 12px; }
+
+        .image-box { 
+            width: 70px; height: 70px; border: 1px dashed #ccc; border-radius: 4px;
+            margin: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            cursor: pointer; background: #fafafa; position: relative; overflow: hidden;
+        }
+        .image-box img { width: 100%; height: 100%; object-fit: contain; position: absolute; top: 0; left: 0; }
+        .upload-icon { font-size: 18px; color: #7f8c8d; z-index: 1; }
+        .upload-text { font-size: 7px; font-weight: bold; color: #999; text-transform: uppercase; z-index: 1; }
+        input[type="file"] { display: none; }
+
+        .table-input { width: 95%; border: 1px solid #eee; padding: 8px 5px; text-align: center; font-size: 12px; outline: none; border-radius: 3px; font-family: inherit; }
+
+        .btn-container { padding: 15px 0; display: flex; flex-wrap: wrap; gap: 10px; }
+        .btn { border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 11px; text-transform: uppercase; padding: 14px 18px; color: white; flex: 1; min-width: 140px; }
+        .btn-add { background: var(--btn-green); }
+        .btn-print { background: var(--btn-blue); }
+        .btn-save { background: var(--btn-orange); }
+        .btn-search { background: var(--btn-purple); }
+        .btn-del { background: none; border: none; cursor: pointer; color: #95a5a6; font-size: 18px; }
+
+        .totals-box { border: 2px solid var(--primary); border-radius: 6px; overflow: hidden; background: white; }
+        .total-line { display: flex; justify-content: space-between; padding: 10px 15px; border-bottom: 1px solid #eee; font-size: 13px; }
+        .savings-highlight { background-color: #ebfbee !important; color: var(--savings) !important; font-weight: bold; }
+        .grand-total { background: var(--primary) !important; color: white !important; font-size: 15px; font-weight: bold; }
+
+        #searchModal { display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 25px; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.3); z-index: 1001; width: 350px; }
+        #modalOverlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; }
+        .modal-select { width: 100%; padding: 12px; margin: 15px 0; border: 1px solid #ccc; border-radius: 4px; }
+
+        @media screen and (max-width: 768px) {
+            .client-info { grid-template-columns: 1fr; }
+            thead { display: none; }
+            tr { display: block; border: 1px solid var(--primary); margin-bottom: 10px; padding: 10px; border-radius: 5px; }
+            td { display: block; text-align: left; padding-left: 40%; position: relative; border: none; border-bottom: 1px solid #eee; }
+            td::before { content: attr(data-label); position: absolute; left: 10px; font-weight: bold; color: var(--primary); }
+        }
+
+        @media print {
+            .btn-container, .btn-del, .upload-icon, .upload-text, input[type="file"], #modalOverlay, #searchModal, #statusToast { display: none !important; }
+            .container { box-shadow: none; max-width: 100%; padding: 0; }
+            .table-input { border: none !important; appearance: none; -webkit-appearance: none; background: transparent; }
+            body { background: white; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="statusToast"></div>
+
+<div class="container">
+    <header>
+        <div class="header-left">
+            <img src="https://drive.google.com/thumbnail?id=1fFh9lGXoSzVHqInw5To3aB5lFb3xD_2N&sz=w500" alt="Urban Casa Logo" class="logo">
+            <div class="brand-content">
+                <h1>Urban Casa</h1>
+                <p class="tagline">Timeless furniture for modern living</p>
+                <div class="address-info">Raichandani Mall, Kompally, Hyderabad | +91 888 66 88 990</div>
+            </div>
+        </div>
+        <div class="quote-header-label">Quotation</div>
+    </header>
+
+    <div class="client-info">
+        <div class="info-group"><label class="info-label">Customer Name</label><input type="text" id="custName" placeholder="Full Name" oninput="toTitleCase(this)"></div>
+        <div class="info-group"><label class="info-label">Contact Number</label><input type="tel" id="custPhone" placeholder="+91"></div>
+        <div class="info-group"><label class="info-label">Quotation Date</label><input type="text" id="dateInput" readonly></div>
+        <div class="info-group"><label class="info-label">Sales Executive</label><input type="text" id="salesExec" placeholder="Name" oninput="toTitleCase(this)"></div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 30px;">#</th>
+                <th style="width: 80px;">Ref</th>
+                <th style="width: 100px;">Barcode</th>
+                <th>Description</th>
+                <th style="width: 50px;">Qty</th>
+                <th>MRP</th>
+                <th>Offer Price</th>
+                <th>Amount</th>
+                <th class="no-print"></th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            <tr class="item-row">
+                <td data-label="#">1</td>
+                <td data-label="Ref"><label class="image-box"><span class="upload-icon">📤</span><span class="upload-text">Upload</span><input type="file" accept="image/*" onchange="previewImg(this)"></label></td>
+                <td><input type="text" class="table-input barcode" placeholder="Code"></td>
+                <td><input type="text" class="table-input desc" placeholder="Details..." oninput="toTitleCase(this)"></td>
+                <td><input type="number" class="table-input qty" value="1" oninput="runCalc(this)"></td>
+                <td><input type="number" class="table-input mrp" value="0" oninput="runCalc(this)"></td>
+                <td><input type="number" class="table-input price" value="0" oninput="runCalc(this)"></td>
+                <td class="row-total">0.00</td>
+                <td class="no-print"><button class="btn-del" onclick="deleteRow(this)">🗑️</button></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <div class="btn-container">
+        <button class="btn btn-add" onclick="addNewRow()">+ Item</button>
+        <button class="btn btn-save" onclick="handleManualSave()">💾 Save Cloud</button>
+        <button class="btn btn-search" onclick="searchQuote()">🔍 Search</button>
+        <button class="btn btn-print" onclick="autoSaveAndExport()">🖨️ Export PDF</button>
+    </div>
+
+    <div class="footer-area" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 20px;">
+        <div>
+            <h4 style="font-size: 10px; text-transform: uppercase;">Remarks</h4>
+            <textarea id="remarks" style="width: 100%; height: 80px; padding: 10px; border-radius: 4px; border: 1px solid #ccc;" oninput="toTitleCase(this)"></textarea>
+        </div>
+        <div class="totals-box">
+            <div class="total-line"><span>Units:</span><span id="finalQty">1</span></div>
+            <div class="total-line"><span>MRP:</span><span id="finalMRP">0.00</span></div>
+            <div class="total-line savings-highlight"><span>Savings:</span><span id="finalSavings">0.00</span></div>
+            <div class="total-line grand-total"><span>Grand Total:</span><span id="finalAmt">0.00</span></div>
+        </div>
+    </div>
+</div>
+
+<div id="modalOverlay" onclick="closeModal()"></div>
+<div id="searchModal">
+    <h4 style="margin:0 0 10px 0;">Multiple Quotes Found</h4>
+    <select id="recordDropdown" class="modal-select"></select>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn btn-save" onclick="confirmSelection()">Load</button>
+        <button class="btn" style="background:#999;" onclick="closeModal()">Cancel</button>
+    </div>
+</div>
+
+<script>
+    const FIREBASE_URL = "https://furniture-quotation-default-rtdb.firebaseio.com/quotations.json";
+    let searchResults = {};
+
+    function toTitleCase(input) {
+        input.value = input.value.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()).join(' ');
+    }
+
+    function showStatus(text, type) {
+        const t = document.getElementById('statusToast');
+        t.textContent = text; t.className = `status-${type}`; t.style.display = 'block';
+        if (type !== 'loading') setTimeout(() => t.style.display = 'none', 3000);
+    }
+
+    window.onload = () => {
+        const n = new Date();
+        document.getElementById('dateInput').value = `${String(n.getDate()).padStart(2, '0')}-${String(n.getMonth() + 1).padStart(2, '0')}-${n.getFullYear()}`;
+    };
+
+    function compressImage(base64, maxWidth) {
+        return new Promise(res => {
+            const i = new Image(); i.src = base64;
+            i.onload = () => {
+                const c = document.createElement('canvas');
+                const s = maxWidth / i.width;
+                c.width = maxWidth; c.height = i.height * s;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(i, 0, 0, c.width, c.height);
+                res(c.toDataURL('image/jpeg', 0.7));
+            };
+        });
+    }
+
+    async function previewImg(input) {
+        if (input.files && input.files[0]) {
+            const r = new FileReader();
+            r.onload = async e => {
+                const comp = await compressImage(e.target.result, 300);
+                const box = input.parentElement;
+                box.querySelectorAll('.upload-icon, .upload-text, img').forEach(el => el.remove());
+                const img = document.createElement('img'); img.src = comp;
+                img.className = 'preview-image'; box.prepend(img);
+            };
+            r.readAsDataURL(input.files[0]);
+        }
+    }
+
+    function runCalc() {
+        let tQ = 0, tA = 0, tM = 0;
+        document.querySelectorAll('.item-row').forEach(row => {
+            const q = parseFloat(row.querySelector('.qty').value) || 0;
+            const m = parseFloat(row.querySelector('.mrp').value) || 0;
+            const p = parseFloat(row.querySelector('.price').value) || 0;
+            row.querySelector('.row-total').innerText = (q * p).toLocaleString('en-IN', {minimumFractionDigits: 2});
+            tQ += q; tM += (q * m); tA += (q * p);
+        });
+        document.getElementById('finalQty').innerText = tQ;
+        document.getElementById('finalMRP').innerText = tM.toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('finalSavings').innerText = (tM - tA).toLocaleString('en-IN', {minimumFractionDigits: 2});
+        document.getElementById('finalAmt').innerText = tA.toLocaleString('en-IN', {minimumFractionDigits: 2});
+    }
+
+    function addNewRow() {
+        const b = document.getElementById('tableBody');
+        const r = document.createElement('tr'); r.className = 'item-row';
+        r.innerHTML = `<td data-label="#">${b.children.length + 1}</td><td data-label="Ref"><label class="image-box"><span class="upload-icon">📤</span><span class="upload-text">Upload</span><input type="file" accept="image/*" onchange="previewImg(this)"></label></td><td><input type="text" class="table-input barcode" placeholder="Code"></td><td><input type="text" class="table-input desc" placeholder="Details..." oninput="toTitleCase(this)"></td><td><input type="number" class="table-input qty" value="1" oninput="runCalc()"></td><td><input type="number" class="table-input mrp" value="0" oninput="runCalc()"></td><td><input type="number" class="table-input price" value="0" oninput="runCalc()"></td><td class="row-total">0.00</td><td class="no-print"><button class="btn-del" onclick="this.closest('tr').remove();runCalc();">🗑️</button></td>`;
+        b.appendChild(r);
+    }
+
+    async function saveToFirebase() {
+        const items = Array.from(document.querySelectorAll('.item-row')).map(row => ({
+            barcode: row.querySelector('.barcode').value,
+            desc: row.querySelector('.desc').value,
+            qty: row.querySelector('.qty').value,
+            mrp: row.querySelector('.mrp').value,
+            price: row.querySelector('.price').value,
+            image: row.querySelector('.preview-image')?.src || null
+        }));
+        const data = {
+            customer: document.getElementById('custName').value,
+            phone: document.getElementById('custPhone').value,
+            date: document.getElementById('dateInput').value,
+            salesExec: document.getElementById('salesExec').value,
+            total: document.getElementById('finalAmt').innerText,
+            remarks: document.getElementById('remarks').value,
+            items: items,
+            timestamp: Date.now()
+        };
+        const res = await fetch(FIREBASE_URL, { method: 'POST', body: JSON.stringify(data) });
+        return res.ok;
+    }
+
+    async function handleManualSave() {
+        showStatus("☁️ Saving...", "loading");
+        if (await saveToFirebase()) showStatus("✅ Saved", "success");
+        else showStatus("❌ Error", "error");
+    }
+
+    async function autoSaveAndExport() {
+        showStatus("☁️ Syncing...", "loading");
+        if (await saveToFirebase()) {
+            showStatus("✅ Synced", "success");
+            setTimeout(() => {
+                const name = document.getElementById('custName').value || "Urban_Casa";
+                document.title = `Quotation_${name}_${document.getElementById('dateInput').value}`;
+                window.print();
+            }, 800);
+        } else {
+            showStatus("❌ Sync Failed", "error");
+            if(confirm("Sync failed. Export PDF anyway?")) window.print();
+        }
+    }
+
+    async function searchQuote() {
+        const q = prompt("Name or Phone:").toLowerCase().trim();
+        if (!q) return;
+        showStatus("🔍 Searching...", "loading");
+        try {
+            const res = await fetch(FIREBASE_URL);
+            const d = await res.json();
+            const keys = Object.keys(d || {}).filter(k => (d[k].customer || "").toLowerCase().includes(q) || (d[k].phone || "").includes(q));
+            if (!keys.length) { showStatus("No Records", "error"); return; }
+            if (keys.length === 1) loadRecord(d[keys[0]]);
+            else {
+                showStatus("Select Record", "success");
+                searchResults = d;
+                const sel = document.getElementById('recordDropdown'); sel.innerHTML = "";
+                keys.sort((a,b) => d[b].timestamp - d[a].timestamp).forEach(k => {
+                    const opt = document.createElement('option'); opt.value = k;
+                    opt.textContent = `${d[k].date} | ${d[k].customer} | ₹${d[k].total}`;
+                    sel.appendChild(opt);
+                });
+                document.getElementById('modalOverlay').style.display = 'block';
+                document.getElementById('searchModal').style.display = 'block';
+            }
+        } catch (e) { showStatus("Error", "error"); }
+    }
+
+    function confirmSelection() {
+        loadRecord(searchResults[document.getElementById('recordDropdown').value]);
+        closeModal();
+    }
+
+    function closeModal() {
+        document.getElementById('modalOverlay').style.display = 'none';
+        document.getElementById('searchModal').style.display = 'none';
+    }
+
+    function loadRecord(r) {
+        document.getElementById('custName').value = r.customer || "";
+        document.getElementById('custPhone').value = r.phone || "";
+        document.getElementById('dateInput').value = r.date || "";
+        document.getElementById('salesExec').value = r.salesExec || "";
+        document.getElementById('remarks').value = r.remarks || "";
+        const b = document.getElementById('tableBody'); b.innerHTML = "";
+        r.items.forEach(i => {
+            addNewRow();
+            const row = b.lastElementChild;
+            row.querySelector('.barcode').value = i.barcode;
+            row.querySelector('.desc').value = i.desc;
+            row.querySelector('.qty').value = i.qty;
+            row.querySelector('.mrp').value = i.mrp;
+            row.querySelector('.price').value = i.price;
+            if (i.image) {
+                const box = row.querySelector('.image-box');
+                box.innerHTML = `<img src="${i.image}" class="preview-image"><input type="file" accept="image/*" onchange="previewImg(this)">`;
+            }
+        });
+        runCalc();
+    }
+</script>
+</body>
+</html>
